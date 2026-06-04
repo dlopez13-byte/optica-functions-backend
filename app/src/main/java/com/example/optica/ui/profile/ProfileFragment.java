@@ -1,6 +1,8 @@
 package com.example.optica.ui.profile;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,12 +26,18 @@ public class ProfileFragment extends Fragment {
 
         TextView tvName = view.findViewById(R.id.profileName);
         TextView tvEmail = view.findViewById(R.id.profileEmail);
+        TextView tvRole = view.findViewById(R.id.profileRole);
         
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             tvEmail.setText(user.getEmail());
             tvName.setText(user.getDisplayName() != null && !user.getDisplayName().isEmpty() ? 
                     user.getDisplayName() : "Usuario de Óptica");
+            
+            // Obtener rol desde caché local
+            SharedPreferences prefs = requireContext().getSharedPreferences("OpticaPrefs", Context.MODE_PRIVATE);
+            String role = prefs.getString("user_role", "cliente");
+            tvRole.setText(role.toUpperCase());
         }
 
         view.findViewById(R.id.btnMyOrders).setOnClickListener(v -> {
@@ -40,7 +48,12 @@ public class ProfileFragment extends Fragment {
         });
 
         view.findViewById(R.id.btnLogout).setOnClickListener(v -> {
+            // Limpiar Firebase y caché de sesión
             FirebaseAuth.getInstance().signOut();
+            SharedPreferences.Editor editor = requireContext().getSharedPreferences("OpticaPrefs", Context.MODE_PRIVATE).edit();
+            editor.remove("user_role");
+            editor.apply();
+
             Intent intent = new Intent(getActivity(), LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);

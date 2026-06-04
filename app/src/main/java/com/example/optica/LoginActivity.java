@@ -28,6 +28,7 @@ import java.util.Map;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
     
@@ -38,29 +39,18 @@ public class LoginActivity extends AppCompatActivity {
 
     private final ActivityResultLauncher<Intent> googleSignInLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-                Log.d("QA_LOGIN", "Resultado del selector: " + result.getResultCode());
                 if (result.getResultCode() == RESULT_OK) {
                     Intent data = result.getData();
                     try {
                         GoogleSignInAccount account = GoogleSignIn.getSignedInAccountFromIntent(data).getResult(ApiException.class);
                         if (account != null) {
-                            String idToken = account.getIdToken();
-                            if (idToken != null) {
-                                Log.d("QA_LOGIN", "Token obtenido con éxito. Iniciando Firebase...");
-                                firebaseAuthWithGoogle(idToken);
-                            } else {
-                                Log.e("QA_LOGIN", "idToken es NULL. ¿Configuraste el SHA-1 en Firebase?");
-                                Toast.makeText(this, "Error: Google no entregó el Token (Revisar SHA-1)", Toast.LENGTH_LONG).show();
-                                setLoading(false);
-                            }
+                            firebaseAuthWithGoogle(account.getIdToken());
                         }
                     } catch (ApiException e) {
-                        Log.e("QA_LOGIN", "Error en API Google: " + e.getStatusCode(), e);
-                        Toast.makeText(this, "Error Google: " + e.getStatusCode(), Toast.LENGTH_SHORT).show();
+                        Log.e("QA_LOGIN", "Google Error: " + e.getStatusCode());
                         setLoading(false);
                     }
                 } else {
-                    Log.e("QA_LOGIN", "Selector cancelado o falló: " + result.getResultCode());
                     setLoading(false);
                 }
             });
@@ -88,24 +78,27 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void firebaseAuthWithGoogle(String idToken) {
-        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+    private void firebaseAuthWithGoogle(String googleIdToken) {
+        AuthCredential credential = GoogleAuthProvider.getCredential(googleIdToken, null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()) {
-                        Log.d("QA_LOGIN", "Autenticación Firebase OK. Consultando rol...");
-                        syncUserWithBackend(idToken);
+                    if (task.isSuccessful() && mAuth.getCurrentUser() != null) {
+                        mAuth.getCurrentUser().getIdToken(true).addOnCompleteListener(tokenTask -> {
+                            if (tokenTask.isSuccessful() && tokenTask.getResult().getToken() != null) {
+                                syncUserWithBackend(tokenTask.getResult().getToken());
+                            } else {
+                                setLoading(false);
+                            }
+                        });
                     } else {
-                        Log.e("QA_LOGIN", "Firebase Auth falló", task.getException());
-                        Toast.makeText(this, "Error Firebase: " + (task.getException() != null ? task.getException().getMessage() : "Desconocido"), Toast.LENGTH_LONG).show();
                         setLoading(false);
                     }
                 });
     }
 
-    private void syncUserWithBackend(String idToken) {
+    private void syncUserWithBackend(String firebaseToken) {
         Map<String, String> body = new HashMap<>();
-        body.put("idToken", idToken);
+        body.put("idToken", firebaseToken);
 
         apiService.login(body).enqueue(new Callback<User>() {
             @Override
@@ -114,24 +107,29 @@ public class LoginActivity extends AppCompatActivity {
                 setLoading(false);
                 if (response.isSuccessful() && response.body() != null) {
                     User user = response.body();
-                    Log.d("QA_LOGIN", "Login completo. Rol: " + user.getRole());
                     saveUserRole(user.getRole());
-                    
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(intent);
+                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     finish();
                 } else {
-                    Log.e("QA_LOGIN", "Backend respondió error: " + response.code());
-                    Toast.makeText(LoginActivity.this, "Error de servidor: " + response.code(), Toast.LENGTH_SHORT).show();
+                    String errorMsg = "Error " + response.code();
+                    try {
+                        if (response.errorBody() != null) {
+                            JSONObject jObjError = new JSONObject(response.errorBody().string());
+                            errorMsg = jObjError.getString("message");
+                        }
+                    } catch (Exception e) {
+                        errorMsg = "Acceso denegado: Fallo de llave de servidor";
+                    }
+                    Toast.makeText(LoginActivity.this, errorMsg, Toast.LENGTH_LONG).show();
+                    Log.e("QA_LOGIN", "401 Error: " + errorMsg);
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
                 if (isFinishing()) return;
-                Log.e("QA_LOGIN", "Fallo total de red", t);
                 setLoading(false);
-                Toast.makeText(LoginActivity.this, "Backend dormido. Reintenta en unos segundos.", Toast.LENGTH_LONG).show();
+                Toast.makeText(LoginActivity.this, "Servidor despertando...", Toast.LENGTH_SHORT).show();
             }
         });
     }
