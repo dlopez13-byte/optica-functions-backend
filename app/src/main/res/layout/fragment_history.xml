@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurface">
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ScrollView
+            android:id="@+id/historyScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Historial de Fórmulas"
+                    android:textAppearance="?attr/textAppearanceHeadlineMedium"
+                    android:textColor="?attr/colorPrimary"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="20dp" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="4dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="?attr/colorPrimary">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+
+                        <TextView
+                            android:id="@+id/prescriptionDate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Fecha: --/--/----"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:textColor="?attr/colorOnSurface" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="?attr/colorOutlineVariant"
+                            android:layout_marginVertical="16dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Ojo Derecho (OD)"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            android:textColor="?attr/colorPrimary" />
+
+                        <GridLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:columnCount="2"
+                            android:layout_marginTop="8dp">
+
+                            <TextView android:id="@+id/odEsfera" android:text="Esf: --" android:textSize="16sp" android:layout_margin="8dp" android:textColor="?attr/colorOnSurfaceVariant"/>
+                            <TextView android:id="@+id/odCilindro" android:text="Cil: --" android:textSize="16sp" android:layout_margin="8dp" android:textColor="?attr/colorOnSurfaceVariant"/>
+                            <TextView android:id="@+id/odEje" android:text="Eje: --" android:textSize="16sp" android:layout_margin="8dp" android:textColor="?attr/colorOnSurfaceVariant"/>
+                            <TextView android:id="@+id/odAdicion" android:text="Add: --" android:textSize="16sp" android:layout_margin="8dp" android:textColor="?attr/colorOnSurfaceVariant"/>
+                        </GridLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="?attr/colorOutlineVariant"
+                            android:layout_marginVertical="16dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Ojo Izquierdo (OI)"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            android:textColor="?attr/colorPrimary" />
+
+                        <GridLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:columnCount="2"
+                            android:layout_marginTop="8dp">
+
+                            <TextView android:id="@+id/oiEsfera" android:text="Esf: --" android:textSize="16sp" android:layout_margin="8dp" android:textColor="?attr/colorOnSurfaceVariant"/>
+                            <TextView android:id="@+id/oiCilindro" android:text="Cil: --" android:textSize="16sp" android:layout_margin="8dp" android:textColor="?attr/colorOnSurfaceVariant"/>
+                            <TextView android:id="@+id/oiEje" android:text="Eje: --" android:textSize="16sp" android:layout_margin="8dp" android:textColor="?attr/colorOnSurfaceVariant"/>
+                            <TextView android:id="@+id/oiAdicion" android:text="Add: --" android:textSize="16sp" android:layout_margin="8dp" android:textColor="?attr/colorOnSurfaceVariant"/>
+                        </GridLayout>
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnRegisterNew"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="24dp"
+                    android:text="Registrar Nueva Receta"
+                    android:textSize="18sp"
+                    app:cornerRadius="8dp" />
+
+            </LinearLayout>
+        </ScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <include layout="@layout/layout_empty_state" />
+
+</FrameLayout>

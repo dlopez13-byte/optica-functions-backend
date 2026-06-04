@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "315165993082",
+    "project_id": "optica-40088",
+    "storage_bucket": "optica-40088.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:315165993082:android:804da929a879df6b46f3c3",
+        "android_client_info": {
+          "package_name": "com.example.optica"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "315165993082-010lr2l7csdbte7bh6fckaeapnj4atnq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.optica",
+            "certificate_hash": "0b398bb48f96a3caf688674ba375c189455b456a"
+          }
+        },
+        {
+          "client_id": "315165993082-smo6slibljgucvh3pfllsf65sorstluf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAP8am-Wv4qeTMLY35nIWhHvD_9AAe48Yg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "315165993082-smo6slibljgucvh3pfllsf65sorstluf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
