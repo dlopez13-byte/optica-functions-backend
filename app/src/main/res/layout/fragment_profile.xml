@@ -46,8 +46,25 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="Rol de Usuario"
+                android:textSize="12sp"
+                android:textColor="?attr/colorOutline" />
+
+            <TextView
+                android:id="@+id/profileRole"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cargando..."
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorPrimary"
+                android:layout_marginBottom="16dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="@string/label_name"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 android:textColor="?attr/colorOutline" />
 
             <TextView
@@ -55,14 +72,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/loading"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:layout_marginBottom="16dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/label_email"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 android:textColor="?attr/colorOutline" />
 
             <TextView
@@ -70,7 +87,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/loading"
-                android:textSize="18sp" />
+                android:textSize="16sp" />
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
