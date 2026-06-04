@@ -26,3 +26,18 @@ exports.notifyAdminOnNewOrder = onDocumentCreated("orders/{orderId}", async (eve
         console.error("Error enviando notificación push:", error);
     }
 });
+
+// ====== TRUCO PARA DESPLEGAR EN RENDER ======
+const express = require('express');
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Si tus funciones usan HTTPS tradicionales de Firebase (functions.https.onRequest)
+// puedes redirigir el tráfico básico aquí o simplemente dejar el puerto abierto:
+app.get('/', (req, res) => {
+    res.send('Backend de la Óptica corriendo con éxito en Render');
+});
+
+app.listen(PORT, () => {
+    console.log(`Servidor escuchando en el puerto ${PORT}`);
+});
