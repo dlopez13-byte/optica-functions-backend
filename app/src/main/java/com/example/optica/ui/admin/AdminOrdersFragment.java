@@ -12,6 +12,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.optica.R;
 import com.example.optica.ui.adapter.AdminOrderAdapter;
+import com.example.optica.data.ApiService;
+import com.example.optica.data.RetrofitClient;
+import com.example.optica.model.Order;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -20,6 +23,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AdminOrdersFragment extends Fragment implements AdminOrderAdapter.OnOrderClickListener {
 
@@ -27,6 +33,7 @@ public class AdminOrdersFragment extends Fragment implements AdminOrderAdapter.O
     private AdminOrderAdapter adapter;
     private final List<Map<String, Object>> orderList = new ArrayList<>();
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
 
     @Nullable
     @Override
@@ -76,21 +83,43 @@ public class AdminOrdersFragment extends Fragment implements AdminOrderAdapter.O
     }
 
     private void simulateNewOrder() {
-        Map<String, Object> testOrder = new HashMap<>();
-        testOrder.put("userId", "TEST_USER_123");
-        testOrder.put("productId", "MARCO_PRUEBA");
-        testOrder.put("color", "Rojo");
-        testOrder.put("size", "L");
-        testOrder.put("lensType", "Filtro Azul");
-        testOrder.put("prescriptionId", 0);
-        testOrder.put("status", "PENDIENTE");
-        testOrder.put("timestamp", System.currentTimeMillis());
+        // QA FIX: Usar el Backend (Render) para crear el pedido de prueba.
+        // Esto garantiza que se disparen las notificaciones push y se validen los roles.
+        Order testOrder = new Order(
+                "TEST_USER_123",
+                "MARCO_PRUEBA",
+                "Rojo",
+                "L",
+                "Filtro Azul",
+                0
+        );
 
-        db.collection("orders").add(testOrder)
-                .addOnSuccessListener(doc -> Toast.makeText(getContext(), 
-                        "Pedido de prueba creado. ¡Espera la notificación!", Toast.LENGTH_LONG).show())
-                .addOnFailureListener(e -> Toast.makeText(getContext(), 
-                        "Error al simular pedido", Toast.LENGTH_SHORT).show());
+        apiService.createOrder(testOrder).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                if (isAdded()) {
+                    if (response.isSuccessful()) {
+                        Toast.makeText(getContext(), 
+                            "¡Pedido simulado con éxito! Revisa tus notificaciones.", 
+                            Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getContext(), 
+                            "Backend respondió error: " + response.code(), 
+                            Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                if (isAdded()) {
+                    Log.e("QA_TEST_ERROR", t.getMessage(), t);
+                    Toast.makeText(getContext(), 
+                        "Fallo de red al simular pedido", 
+                        Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     @Override

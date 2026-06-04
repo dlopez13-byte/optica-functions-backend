@@ -7,28 +7,24 @@
     android:padding="16dp"
     android:background="?attr/colorSurface">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Gestión de Pedidos"
-        android:textAppearance="?attr/textAppearanceHeadlineMedium"
-        android:textStyle="bold"
-        android:textColor="?attr/colorPrimary"
-        android:layout_marginBottom="16dp" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnTestNotification"
-        style="@style/Widget.Material3.Button.OutlinedButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="🧪 Simular Nuevo Pedido (Probar Push)"
-        app:icon="@android:drawable/ic_dialog_info" />
+    <!-- Eliminado el TextView redundante porque ahora usamos la Toolbar superior -->
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvAdminOrders"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnTestNotification"
+        style="@style/Widget.Material3.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="🧪 Simular Nuevo Pedido (Modo QA)"
+        android:textColor="?attr/colorOutline"
+        app:icon="@android:drawable/ic_dialog_info"
+        app:iconTint="?attr/colorOutline" />
 
 </LinearLayout>
