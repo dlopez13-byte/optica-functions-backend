@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:gravity="center_horizontal">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ubicación y Contacto"
+        android:textAppearance="?attr/textAppearanceHeadlineMedium"
+        android:textColor="?attr/colorPrimary"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="32dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnCall"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="Llamar a la Tienda"
+        android:layout_marginBottom="16dp"
+        app:icon="@android:drawable/ic_menu_call" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnWhatsApp"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="Chat de WhatsApp"
+        android:layout_marginBottom="16dp"
+        app:icon="@android:drawable/stat_notify_chat"
+        style="@style/Widget.Material3.Button.TonalButton" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnEmail"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="Enviar Correo"
+        android:layout_marginBottom="16dp"
+        app:icon="@android:drawable/ic_dialog_email"
+        style="@style/Widget.Material3.Button.TonalButton" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnMaps"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="Ver en Google Maps"
+        app:icon="@android:drawable/ic_dialog_map"
+        style="@style/Widget.Material3.Button.OutlinedButton" />
+
+</LinearLayout>

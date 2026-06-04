@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Mirada Y Estilo</string>
+    <string name="nav_home">Inicio</string>
+    <string name="nav_admin_panel">Panel Administrador</string>
+    <string name="nav_profile">Mi Perfil</string>
+    <string name="nav_logout">Cerrar Sesión</string>
+    <string name="nav_options">Opciones</string>
+    <string name="nav_catalog">Catálogo</string>
+    <string name="nav_appointment">Citas</string>
+    <string name="nav_history">Historial</string>
+    <string name="nav_contact">Contacto</string>
+    <string name="my_orders">Mis Pedidos</string>
+    <string name="personal_info">Información Personal</string>
+    <string name="label_name">Nombre</string>
+    <string name="label_email">Correo Electrónico</string>
+    <string name="loading">Cargando...</string>
+    <string name="btn_google_login">Continuar con Google</string>
+    <string name="btn_login">Iniciar Sesión</string>
+    <string name="welcome">Bienvenido a Óptica</string>
+    <string name="default_web_client_id">315165993082-smo6slibljgucvh3pfllsf65sorstluf.apps.googleusercontent.com</string>
+</resources>
