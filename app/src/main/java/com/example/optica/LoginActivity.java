@@ -28,6 +28,7 @@ import java.util.Map;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
     
@@ -43,15 +44,13 @@ public class LoginActivity extends AppCompatActivity {
                     try {
                         GoogleSignInAccount account = GoogleSignIn.getSignedInAccountFromIntent(data).getResult(ApiException.class);
                         if (account != null) {
-                            Log.d("QA_LOGIN", "Google OK, pidiendo Token de Firebase...");
                             firebaseAuthWithGoogle(account.getIdToken());
                         }
                     } catch (ApiException e) {
-                        Log.e("QA_LOGIN", "Error Google API: " + e.getStatusCode());
+                        Log.e("QA_LOGIN", "Google Error: " + e.getStatusCode());
                         setLoading(false);
                     }
                 } else {
-                    Log.e("QA_LOGIN", "Google Sign-In Cancelado");
                     setLoading(false);
                 }
             });
@@ -74,7 +73,6 @@ public class LoginActivity extends AppCompatActivity {
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         findViewById(R.id.btnGoogleLogin).setOnClickListener(v -> {
-            Log.d("QA_LOGIN", "Click en Google");
             setLoading(true);
             googleSignInLauncher.launch(mGoogleSignInClient.getSignInIntent());
         });
@@ -85,23 +83,14 @@ public class LoginActivity extends AppCompatActivity {
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful() && mAuth.getCurrentUser() != null) {
-                        Log.d("QA_LOGIN", "Firebase Auth OK. Extrayendo ID Token definitivo...");
-                        
-                        // OBTENER EL ID TOKEN DE FIREBASE (Este es el que valida el backend en Render)
                         mAuth.getCurrentUser().getIdToken(true).addOnCompleteListener(tokenTask -> {
                             if (tokenTask.isSuccessful() && tokenTask.getResult().getToken() != null) {
-                                String firebaseToken = tokenTask.getResult().getToken();
-                                Log.d("QA_LOGIN", "Token obtenido. Sincronizando con Render...");
-                                syncUserWithBackend(firebaseToken);
+                                syncUserWithBackend(tokenTask.getResult().getToken());
                             } else {
-                                Log.e("QA_LOGIN", "Error al obtener Token de Firebase");
-                                Toast.makeText(this, "Fallo técnico de seguridad", Toast.LENGTH_SHORT).show();
                                 setLoading(false);
                             }
                         });
                     } else {
-                        Log.e("QA_LOGIN", "Firebase Auth Falló");
-                        Toast.makeText(this, "Error: No se pudo validar con Firebase", Toast.LENGTH_SHORT).show();
                         setLoading(false);
                     }
                 });
@@ -118,13 +107,21 @@ public class LoginActivity extends AppCompatActivity {
                 setLoading(false);
                 if (response.isSuccessful() && response.body() != null) {
                     User user = response.body();
-                    Log.d("QA_LOGIN", "Éxito total. Rol: " + user.getRole());
                     saveUserRole(user.getRole());
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     finish();
                 } else {
-                    Log.e("QA_LOGIN", "Backend rechazó token. Código: " + response.code());
-                    Toast.makeText(LoginActivity.this, "Servidor: Acceso Denegado (" + response.code() + ")", Toast.LENGTH_LONG).show();
+                    String errorMsg = "Error " + response.code();
+                    try {
+                        if (response.errorBody() != null) {
+                            JSONObject jObjError = new JSONObject(response.errorBody().string());
+                            errorMsg = jObjError.getString("message");
+                        }
+                    } catch (Exception e) {
+                        errorMsg = "Acceso denegado: Fallo de llave de servidor";
+                    }
+                    Toast.makeText(LoginActivity.this, errorMsg, Toast.LENGTH_LONG).show();
+                    Log.e("QA_LOGIN", "401 Error: " + errorMsg);
                 }
             }
 
@@ -132,8 +129,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
                 if (isFinishing()) return;
                 setLoading(false);
-                Log.e("QA_LOGIN", "Error de red: " + t.getMessage());
-                Toast.makeText(LoginActivity.this, "Servidor despertando... intenta en 10 seg.", Toast.LENGTH_LONG).show();
+                Toast.makeText(LoginActivity.this, "Servidor despertando...", Toast.LENGTH_SHORT).show();
             }
         });
     }
